@@ -2,6 +2,7 @@ package com.example.share;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -24,6 +25,8 @@ import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.model.ShareVideo;
+import com.facebook.share.model.ShareVideoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -123,6 +126,34 @@ public class MainActivity extends AppCompatActivity {
                         .into(target);
             }
         });
+        btnCompartirVideo.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent();
+                intent.setType("video/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivity(Intent.createChooser(intent,"Seleccionar video"), REQUEST_VIDEO_CODE);
+            }
+        });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK){
+            if(requestCode == REQUEST_VIDEO_CODE){
+                Uri selectedVideo = data.getData();
+                ShareVideo video = new ShareVideo.Builder()
+                        .setLocalUrl(selectedVideo)
+                        .build();
+                ShareVideoContent videoContent = new ShareVideoContent.Builder()
+                        .setContentTitle("Este es un video")
+                        .setContentDescription("Un video mas")
+                        .setVideo(video)
+                        .build();
+                if(ShareDialog.canShow(ShareVideoContent.class)){
+                    ShareDialog.show(videoContent);
+                }
+            }
+        }
     }
     private void clave(){
         try{
