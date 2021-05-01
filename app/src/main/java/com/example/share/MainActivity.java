@@ -36,6 +36,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_VIDEO_CODE = 1000;
     Button btnCompartirLink,btnCompartirFoto,btnCompartirVideo;
     CallbackManager callbackManager;
     ShareDialog shareDialog;
@@ -132,14 +133,15 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setType("video/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivity(Intent.createChooser(intent,"Seleccionar video"), REQUEST_VIDEO_CODE);
+                startActivityForResult(Intent.createChooser(intent,"Seleccionar Video"),REQUEST_VIDEO_CODE);
             }
         });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK){
-            if(requestCode == REQUEST_VIDEO_CODE){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_VIDEO_CODE) {
                 Uri selectedVideo = data.getData();
                 ShareVideo video = new ShareVideo.Builder()
                         .setLocalUrl(selectedVideo)
@@ -149,8 +151,8 @@ public class MainActivity extends AppCompatActivity {
                         .setContentDescription("Un video mas")
                         .setVideo(video)
                         .build();
-                if(ShareDialog.canShow(ShareVideoContent.class)){
-                    ShareDialog.show(videoContent);
+                if (ShareDialog.canShow(ShareVideoContent.class)) {
+                    shareDialog.show(videoContent);
                 }
             }
         }
